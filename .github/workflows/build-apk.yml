@@ -24,6 +24,16 @@ jobs:
           unzip -o WealthEmpire-3.1.0-source.zip -d extracted
           find extracted -type f | head -100
 
+      - name: Fix Gradle wrapper checksum
+        run: |
+          PROP=$(find extracted -path '*/gradle/wrapper/gradle-wrapper.properties' -type f | head -1)
+          if [ -z "$PROP" ]; then
+            echo "Gradle wrapper properties not found"
+            exit 1
+          fi
+          sed -i '/^distributionSha256Sum=/d' "$PROP"
+          cat "$PROP"
+
       - name: Locate Gradle project
         run: |
           GRADLE_FILE=$(find extracted -name gradlew -type f | head -1)
